@@ -25,17 +25,16 @@ const Reserve = ({ setOpen, hotelId }) => {
       dates.push(new Date(date).getTime());
       date.setDate(date.getDate() + 1);
     }
-
     return dates;
   };
 
   const alldates = getDatesInRange(dates[0].startDate, dates[0].endDate);
 
+  // for checking the availability of the room
   const isAvailable = (roomNumber) => {
     const isFound = roomNumber.unavailableDates.some((date) =>
       alldates.includes(new Date(date).getTime())
     );
-
     return !isFound;
   };
 

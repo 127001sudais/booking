@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import { createError } from "../utils/error.js";
 import jwt from "jsonwebtoken";
 
+// user registration
 export const register = async (req, res, next) => {
   try {
     const salt = bcrypt.genSaltSync(10);
@@ -19,11 +20,14 @@ export const register = async (req, res, next) => {
     next(err);
   }
 };
+
+// user login
 export const login = async (req, res, next) => {
   try {
     const user = await User.findOne({ username: req.body.username });
     if (!user) return next(createError(404, "User not found!"));
 
+    // comparing hashed salted password stored in db
     const isPasswordCorrect = await bcrypt.compare(
       req.body.password,
       user.password
@@ -31,6 +35,7 @@ export const login = async (req, res, next) => {
     if (!isPasswordCorrect)
       return next(createError(400, "Wrong password or username!"));
 
+    // verifying admin with jwt 
     const token = jwt.sign(
       { id: user._id, isAdmin: user.isAdmin },
       process.env.JWT
